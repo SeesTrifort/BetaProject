@@ -47,37 +47,27 @@ public class SeaGameManager : GameManager
 			turtles[i] = SeaGameCharacter.Create(Random.Range(1, level+2),turtlesTransform[i]);
 		}
 
-		StartTimer(lastCorrectTime);
+		GameTimer.instance.StartTimer(lastCorrectTime, () => TimeUp());
 	}
 
 	void Pause () 
 	{
-		PauseTimer();	
-	}
-
-	public override void PauseAction ()
-	{
-		Debug.Log("Pause");
+		GameTimer.instance.PauseTimer();	
 	}
 
 	void Resume ()
 	{
-		ResumeTimer();
+		GameTimer.instance.ResumeTimer();
 	}
 
-	public override void ResumeAction ()
+	void TimeUp () 
 	{
-		Debug.Log("Resume");
-	}
-
-	public override void TimeupAction ()
-	{
-		Debug.Log("Timeup");
+		Debug.Log("TimeUp");
 	}
 		
 	public void Right () 
 	{
-		if (!timerFlag) return;
+		if (!GameTimer.instance.timerFlag) return;
 
 		if (turtles[0].mixedId % 2 == 0) Correct();
 		else Wrong();
@@ -85,7 +75,7 @@ public class SeaGameManager : GameManager
 
 	public void Left () 
 	{
-		if (!timerFlag) return;
+		if (!GameTimer.instance.timerFlag) return;
 
 		if (turtles[0].mixedId % 2 == 1) Correct();
 		else Wrong();
@@ -95,28 +85,23 @@ public class SeaGameManager : GameManager
 	{
 		totalCorrect ++;
 
-		if (lastCorrectTime - restTime < 1f)
+		if (lastCorrectTime - GameTimer.instance.restTime < 1f)
 		{
 			combo ++;
 
 			maxCombo = Mathf.Max(maxCombo, combo);
 		}
 
-		lastCorrectTime = restTime;
+		lastCorrectTime = GameTimer.instance.restTime;
 
 		NextTurtle();
 
 		level = totalCorrect/30 +1;
-
-		Debug.Log("Correct " + combo +" , "+ restTime);
-
 	}
 
 	void Wrong ()
 	{
 		totalWrong ++;
-
-		Debug.Log("Wrong");
 	}
 
 	void NextTurtle () 
@@ -127,7 +112,5 @@ public class SeaGameManager : GameManager
 		}
 		turtles[turtles.Length-1].SetCharacter(Random.Range(1, level+2));
 	}
-
-
 
 }
