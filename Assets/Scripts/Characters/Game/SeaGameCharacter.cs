@@ -17,9 +17,12 @@ public class SeaGameCharacter : GameCharacter
 		return gameCharacter;
 	}
 
+	public int mixedId;
+
 	public SeaGameCharacter SetCharacter (int id)
 	{
 		SetCharacter(CharacterType.Turtle, id);
+		mixedId = id;
 		return this;
 	}
 }
