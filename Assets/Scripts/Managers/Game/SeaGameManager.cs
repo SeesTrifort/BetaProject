@@ -10,53 +10,112 @@ public class SeaGameManager : GameManager
 
 	int level = 1;
 
+	int totalCorrect = 0;
+
+	int totalWrong = 0;
+
+	int combo = 0;
+
+	int maxCombo = 0;
+
+	float lastCorrectTime = 0;
+
 	public override void Initialized ()
 	{
-		Debug.Log("Initialized");
 		GameStart();
+
+		InputManager.instance.SetGameManager(this);
 	}
 
 	void GameStart () 
 	{
 		level = 1;
 
+		totalCorrect = 0;
+
+		totalWrong = 0;
+
+		combo = 0;
+
+		maxCombo = 0;
+
+		lastCorrectTime = 60f;
+
 		turtles = new SeaGameCharacter[turtlesTransform.Length];
 		for (int i = 0; i < turtlesTransform.Length; i++) 
 		{
 			turtles[i] = SeaGameCharacter.Create(Random.Range(1, level+2),turtlesTransform[i]);
 		}
+
+		StartTimer(lastCorrectTime);
 	}
 
-#if UNITY_EDITOR
-	void Update()
+	void Pause () 
 	{
-		if (Input.GetKeyDown(KeyCode.LeftArrow)){
-			Left();
-		}else if (Input.GetKeyDown(KeyCode.RightArrow)){
-			Right();
-		}
+		PauseTimer();	
 	}
-#endif
-		
-	void Right () 
+
+	public override void PauseAction ()
 	{
+		Debug.Log("Pause");
+	}
+
+	void Resume ()
+	{
+		ResumeTimer();
+	}
+
+	public override void ResumeAction ()
+	{
+		Debug.Log("Resume");
+	}
+
+	public override void TimeupAction ()
+	{
+		Debug.Log("Timeup");
+	}
+		
+	public void Right () 
+	{
+		if (!timerFlag) return;
+
 		if (turtles[0].mixedId % 2 == 0) Correct();
 		else Wrong();
 	}
 
-	void Left () 
+	public void Left () 
 	{
+		if (!timerFlag) return;
+
 		if (turtles[0].mixedId % 2 == 1) Correct();
 		else Wrong();
 	}
 
 	void Correct ()
 	{
+		totalCorrect ++;
+
+		if (lastCorrectTime - restTime < 1f)
+		{
+			combo ++;
+
+			maxCombo = Mathf.Max(maxCombo, combo);
+		}
+
+		lastCorrectTime = restTime;
+
 		NextTurtle();
+
+		level = totalCorrect/30 +1;
+
+		Debug.Log("Correct " + combo +" , "+ restTime);
+
 	}
 
 	void Wrong ()
 	{
+		totalWrong ++;
+
 		Debug.Log("Wrong");
 	}
 
@@ -68,4 +127,7 @@ public class SeaGameManager : GameManager
 		}
 		turtles[turtles.Length-1].SetCharacter(Random.Range(1, level+2));
 	}
+
+
+
 }
