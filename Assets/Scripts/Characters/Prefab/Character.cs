@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -27,6 +28,7 @@ public class Character : MonoBehaviour
 
 		selected.transform.SetParent(parent);
 		selected.transform.localPosition = Vector3.zero;
+		selected.transform.localScale = Vector3.one;
 
 		return selected;
 	}

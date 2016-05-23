@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class SeaGameCharacter : GameCharacter 
 {
@@ -10,10 +11,11 @@ public class SeaGameCharacter : GameCharacter
 
 	public static SeaGameCharacter Create (Transform parent = null) 
 	{
-		SeaGameCharacter gameCharacter = new GameObject().AddComponent<SeaGameCharacter>();
+		SeaGameCharacter gameCharacter = new GameObject().AddComponent<RectTransform>().gameObject.AddComponent<SeaGameCharacter>();
 		gameCharacter.name = "Turtle";
 		gameCharacter.transform.SetParent(parent);
 		gameCharacter.transform.localPosition = Vector3.zero;
+		gameCharacter.transform.localScale = Vector3.one;
 		return gameCharacter;
 	}
 
