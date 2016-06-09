@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.UI;
 
 public class GameTimer : MonoBehaviour 
 {
@@ -18,6 +19,10 @@ public class GameTimer : MonoBehaviour
 	int timerPauseCount = 1;
 
 	public float restTime {get; private set;}
+
+	Text label;
+
+	Image image;
 
 	public bool timerFlag 
 	{
@@ -54,6 +59,11 @@ public class GameTimer : MonoBehaviour
 		timerPauseCount --;
 	}
 
+	public void PlusTime (float time)
+	{
+		restTime += time;
+	}
+
 	void Update () 
 	{
 		if (timerPauseCount != 0) return;
@@ -68,5 +78,16 @@ public class GameTimer : MonoBehaviour
 
 			timeupAction();
 		}
+
+		if (label != null) label.text = ((int)restTime).ToString();
+
+		if (image != null) image.fillAmount = (restTime/60f);
+	}
+
+	public void SetText (Text _label, Image _image) 
+	{
+		label = _label;
+
+		image = _image;
 	}
 }
