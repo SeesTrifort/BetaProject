@@ -27,9 +27,11 @@ public class Character : MonoBehaviour
 		}
 
 		selected.transform.SetParent(parent);
+		RectTransform uiTransform = selected.transform as RectTransform;
+		uiTransform.offsetMax = Vector3.zero;
+		uiTransform.offsetMin = Vector3.zero;
 		selected.transform.localPosition = Vector3.zero;
 		selected.transform.localScale = Vector3.one;
-
 		return selected;
 	}
 

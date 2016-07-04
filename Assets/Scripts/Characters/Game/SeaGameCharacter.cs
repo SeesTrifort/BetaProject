@@ -11,9 +11,12 @@ public class SeaGameCharacter : GameCharacter
 
 	public static SeaGameCharacter Create (Transform parent = null) 
 	{
-		SeaGameCharacter gameCharacter = new GameObject().AddComponent<RectTransform>().gameObject.AddComponent<SeaGameCharacter>();
+		SeaGameCharacter gameCharacter = Instantiate(Resources.Load("Prefabs/SeaGameCharacter") as GameObject).AddComponent<SeaGameCharacter>();
 		gameCharacter.name = "Turtle";
 		gameCharacter.transform.SetParent(parent);
+		RectTransform uiTransform = gameCharacter.transform as RectTransform;
+		uiTransform.offsetMax = Vector3.zero;
+		uiTransform.offsetMin = Vector3.zero;
 		gameCharacter.transform.localPosition = Vector3.zero;
 		gameCharacter.transform.localScale = Vector3.one;
 		return gameCharacter;
