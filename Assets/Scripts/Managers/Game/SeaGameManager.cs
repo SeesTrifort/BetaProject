@@ -34,6 +34,12 @@ public class SeaGameManager : GameManager
 	[SerializeField]
 	Transform[] turtlesTransform;
 
+	[SerializeField]
+	Transform[] turtlesAnswerTransform;
+
+	[SerializeField]
+	GameObject newLevelPrefab;
+
 	SeaGameCharacter[] turtles;
 
 	int level = 1;
@@ -98,6 +104,9 @@ public class SeaGameManager : GameManager
 		{
 			turtles[i] = SeaGameCharacter.Create(Random.Range(1, level+2),turtlesTransform[i]);
 		}
+
+		Character.Get(CharacterType.Turtle, 1, turtlesAnswerTransform[0]);
+		Character.Get(CharacterType.Turtle, 2, turtlesAnswerTransform[1]);
 
 		GameTimer.instance.StartTimer(60f, () => TimeUp());
 	}
@@ -186,11 +195,36 @@ public class SeaGameManager : GameManager
 
 		lastCorrectTime = GameTimer.instance.restTime;
 
-		NextTurtle();
+		StartCoroutine(NextTurtle());
 
-		level = Mathf.Min(totalCorrect/30 +1, 9);
+		int newLevel = Mathf.Min(totalCorrect/30 +1, 9);
+
+		if (level !=newLevel) StartCoroutine(LevelUpAnimation(newLevel));
 
 		CalculateScore();
+	}
+
+	bool inAnimation = false;
+
+	IEnumerator LevelUpAnimation (int newlevel) 
+	{
+		if (!inAnimation)
+		{
+			inAnimation = true;
+
+			GameObject go = Instantiate(newLevelPrefab) as GameObject;
+			go.transform.SetParent(ui.transform);
+			go.transform.localPosition = new Vector3(level % 2 == 1 ? -200 : 200 , 0 , 0);
+			go.transform.localScale = Vector3.one;
+			go.GetComponent<NewLevelTurtle>().SetCharacter(level+2);
+
+			yield return new WaitForSeconds(1.3f);
+		
+			Character.Get(CharacterType.Turtle, level+2, turtlesAnswerTransform[level+1]);
+
+			level = newlevel;
+			inAnimation = false;
+		}
 	}
 
 	void Wrong ()
@@ -207,8 +241,15 @@ public class SeaGameManager : GameManager
 		bestScore.Value = Mathf.Max(bestScore.Value, score.Value);
 	}
 
-	void NextTurtle () 
+	IEnumerator NextTurtle () 
 	{
+		for (int i = 0; i < turtles.Length; i++) 
+		{
+			(turtles[i].character as Turtle).MoveDown();
+		}
+		
+		yield return new WaitForSeconds(0.1f);
+
 		for (int i = 0; i < turtles.Length -1; i++) 
 		{
 			turtles[i].SetCharacter(turtles[i+1].character.id);
